@@ -29,20 +29,22 @@ import streamlit as st
 import google.generativeai as palm
 
 # load token
-try: 
+try:
     from backend.config import *
 except ImportError:
     pass
 
+
 # configure palm API
-def api_configure(api_key = PALM_TOKEN):
+def api_configure(api_key=PALM_TOKEN):
     """
     Configure palm API with token.
 
     Args:
         token (string): PaLM-2 API token. Defaults to PALM_TOKEN.
     """
-    palm.configure(api_key = PALM_TOKEN)
+    palm.configure(api_key=PALM_TOKEN)
+
 
 # load the large language model
 def load_llm():
@@ -53,14 +55,15 @@ def load_llm():
         Language Model: Text Bison 001
     """
     models = [
-    m
-    for m in palm.list_models()
-    if "generateText" in m.supported_generation_methods
+        m
+        for m in palm.list_models()
+        if "generateText" in m.supported_generation_methods
     ]
-     # using text-bison-001
-    model = models[0].name 
-    
+    # using text-bison-001
+    model = models[0].name
+
     return model
+
 
 def data_processing(data):
     """
@@ -74,6 +77,7 @@ def data_processing(data):
     """
     data_json = data.to_json(orient="records")
     return data_json
+
 
 def is_valid_json(json_string):
     """
@@ -91,15 +95,16 @@ def is_valid_json(json_string):
     except ValueError:
         return False
 
+
 # process and clean the prompt
 def prompt_processing(user_instruct, json_data):
     """
     Process and clean the prompt.
-    
+
     Args:
         user_instruct (string): Prompt from the user.
         json_data (JSON): JSON data from the large language model.
-        
+
     Returns:
         string: Cleaned prompt.
     """
@@ -108,8 +113,8 @@ def prompt_processing(user_instruct, json_data):
 
     You will be feed with JSON data about shows on Netflix. For example, 
     """
-    
-    instruct2 ="""
+
+    instruct2 = """
 
     You must response with a JSON output consisting of a few movies will be watched by a person based on the data.
 
@@ -117,11 +122,12 @@ def prompt_processing(user_instruct, json_data):
     Answer: [{"Movies":"The Social Dilemma"},{"Movies":"The Great Hack"},{"Movies":"The Big Hack"}]
 
     Please answer the following questions: """
-    
-    user_instruct = f'{user_instruct}'
-    prompt = instruct1 + f'{json_data}' + instruct2 + user_instruct
-    
+
+    user_instruct = f"{user_instruct}"
+    prompt = instruct1 + f"{json_data}" + instruct2 + user_instruct
+
     return prompt
+
 
 def json_to_frame(output):
     """
@@ -137,6 +143,7 @@ def json_to_frame(output):
     df_output = pd.DataFrame(json_output)
     return df_output
 
+
 # accessing the llm with prompt
 def llm_agent(prompt, model):
     """
@@ -150,25 +157,25 @@ def llm_agent(prompt, model):
         String: Output from the large language model.
     """
     completion = palm.generate_text(
-    model=model,
-    prompt=prompt,
-    temperature=0,
-    # The maximum length of the response
-    max_output_tokens=800,
+        model=model,
+        prompt=prompt,
+        temperature=0,
+        # The maximum length of the response
+        max_output_tokens=800,
     )
-    
+
     return completion.result
 
+
 # testing
-#api_configure(api_key=PALM_TOKEN)
-#model = load_llm()
-#prompt = prompt_processing("Some actions movies")
-#output = llm_agent(prompt, model)
-#df_output = json_to_frame(output)
-#print(df_output)
-#print(output)
+# api_configure(api_key=PALM_TOKEN)
+# model = load_llm()
+# prompt = prompt_processing("Some actions movies")
+# output = llm_agent(prompt, model)
+# df_output = json_to_frame(output)
+# print(df_output)
+# print(output)
 
-#df = pd.read_excel('data.xlsx')
-#a = prompt_processing("Some actions movies", data_processing(df))
-#print(a)
-
+# df = pd.read_excel('data.xlsx')
+# a = prompt_processing("Some actions movies", data_processing(df))
+# print(a)

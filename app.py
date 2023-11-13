@@ -31,19 +31,23 @@ from backend.functions import *
 
 # page setup
 st.set_page_config(
-    page_title = "Movie Recommendation With PaLM-2",
-    page_icon = "🤖",
-    layout = "wide",
-    initial_sidebar_state = "expanded",
+    page_title="Movie Recommendation With PaLM-2",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="expanded",
 )
 
 # sidebar
 with st.sidebar:
     st.title("🍿 Movie Recommendation With PaLM-2")
     st.sidebar.caption("MIT License © 2023 keanteng")
-    with st.expander("PaLM-2 API", expanded = True):
-        api_toggle = st.toggle("Enable PaLM-2 API", value = False)
-        api_input = st.text_input("PaLM-2 API Token", type="password", placeholder="Enter your PaLM-2 API token here")
+    with st.expander("PaLM-2 API", expanded=True):
+        api_toggle = st.toggle("Enable PaLM-2 API", value=False)
+        api_input = st.text_input(
+            "PaLM-2 API Token",
+            type="password",
+            placeholder="Enter your PaLM-2 API token here",
+        )
 
 
 # main page
@@ -53,10 +57,10 @@ movie_data = pd.read_excel("data.xlsx")
 
 ## configure API
 if api_toggle:
-    api_configure(api_key = api_input)
+    api_configure(api_key=api_input)
 else:
     api_configure(api_key=PALM_TOKEN)
-    
+
 # chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -77,9 +81,11 @@ prompt = st.chat_input("Enter your prompt here")
 model = load_llm()
 movie_data = data_processing(movie_data)
 
-with st.chat_message(name='AI', avatar="🎬"):
-    st.write("Share your thoughts on a movie you like, and I'll recommend you a movie you might like!")
-    
+with st.chat_message(name="AI", avatar="🎬"):
+    st.write(
+        "Share your thoughts on a movie you like, and I'll recommend you a movie you might like!"
+    )
+
 if prompt:
     # Display user message in chat message container
     st.chat_message("user").markdown(prompt)
@@ -87,7 +93,7 @@ if prompt:
     response = llm_agent(prompt=to_llm, model=model)
     response_df = json_to_frame(response)
     st.chat_message("assistant").dataframe(response_df, hide_index=True)
-    
+
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.session_state.messages.append({"role": "assistant", "content": response})
