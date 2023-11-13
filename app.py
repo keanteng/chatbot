@@ -87,6 +87,7 @@ if prompt:
     response = llm_agent(prompt=to_llm, model=model)
     response_df = json_to_frame(response)
     st.chat_message("assistant").dataframe(response_df, hide_index=True)
+    
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.session_state.messages.append({"role": "assistant", "content": response})
