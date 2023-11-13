@@ -111,7 +111,7 @@ def prompt_processing(user_instruct, json_data):
     
     instruct2 ="""
 
-    You will then response with a JSON output consisting of a few movies will be watched by a person based on the data.
+    You must response with a JSON output consisting of a few movies will be watched by a person based on the data.
 
     Example1: Some Drame Movies
     Answer: [{"Movies":"The Social Dilemma"},{"Movies":"The Great Hack"},{"Movies":"The Big Hack"}]
@@ -152,7 +152,7 @@ def llm_agent(prompt, model):
     completion = palm.generate_text(
     model=model,
     prompt=prompt,
-    temperature=0.1,
+    temperature=0,
     # The maximum length of the response
     max_output_tokens=800,
     )
